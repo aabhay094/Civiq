@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Report with AI — CIVIQ{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'civiq/css/report.css' %}">
+{% endblock %}
+{% block content %}
+
+<section class="relative overflow-hidden border-b border-white/10">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.12),transparent_45%)]"></div>
+  <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+    <span class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium px-3 py-1 mb-6">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> New — AI-Powered Reporting
+    </span>
+    <h1 class="font-display text-4xl sm:text-5xl font-bold text-white leading-tight mb-5">
+      Report Civic Problems Smarter.
+    </h1>
+    <p class="text-zinc-400 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+      Capture a photo. Let CIVIQ understand the problem. Review the AI-generated report. Submit it directly to the CIVIQ system.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="{% url 'ai_camera' %}" class="report-cta-glow inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-7 py-4 rounded-xl text-lg transition">
+        <i data-lucide="camera" class="w-5 h-5"></i> Report with AI
+      </a>
+      <a href="#how-it-works" class="inline-flex items-center gap-2 border border-white/15 hover:bg-white/5 text-white font-semibold px-6 py-4 rounded-xl transition">
+        Learn How CIVIQ Works
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <h2 class="font-display text-2xl font-bold text-white text-center mb-10">How It Works</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="rounded-xl border border-white/10 bg-panel/40 p-5 text-center">
+      <div class="w-10 h-10 mx-auto rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-3">
+        <i data-lucide="camera" class="w-4.5 h-4.5 text-emerald-400"></i>
+      </div>
+      <p class="text-sm font-medium text-white">1. Take a Photo</p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-panel/40 p-5 text-center">
+      <div class="w-10 h-10 mx-auto rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-3">
+        <i data-lucide="brain-circuit" class="w-4.5 h-4.5 text-emerald-400"></i>
+      </div>
+      <p class="text-sm font-medium text-white">2. AI Analyzes It</p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-panel/40 p-5 text-center">
+      <div class="w-10 h-10 mx-auto rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-3">
+        <i data-lucide="clipboard-check" class="w-4.5 h-4.5 text-emerald-400"></i>
+      </div>
+      <p class="text-sm font-medium text-white">3. You Review It</p>
+    </div>
+    <div class="rounded-xl border border-white/10 bg-panel/40 p-5 text-center">
+      <div class="w-10 h-10 mx-auto rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-3">
+        <i data-lucide="send" class="w-4.5 h-4.5 text-emerald-400"></i>
+      </div>
+      <p class="text-sm font-medium text-white">4. Submit to CIVIQ</p>
+    </div>
+  </div>
+  <p class="text-center text-zinc-500 text-xs mt-8">
+    AI assists — it never decides alone. You always review and confirm before anything is submitted.
+  </p>
+</section>
+
+{% endblock %}

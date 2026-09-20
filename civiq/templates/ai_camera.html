@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}AI Camera — CIVIQ{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'civiq/css/camera.css' %}">
+{% endblock %}
+{% block content %}
+
+<section class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+  <!-- STEP: Camera capture -->
+  <div id="step-capture" class="ai-step">
+    <h1 class="font-display text-2xl font-bold text-white mb-1 text-center">CIVIQ AI Camera</h1>
+    <p class="text-zinc-500 text-sm text-center mb-6">Capture the civic problem</p>
+
+    <video id="cameraVideo" autoplay playsinline muted class="hidden mb-5"></video>
+
+    <div id="cameraFallback" class="hidden rounded-xl border border-dashed border-white/15 p-8 text-center mb-5">
+      <i data-lucide="image-plus" class="w-8 h-8 text-zinc-500 mx-auto mb-3"></i>
+      <p class="text-sm text-zinc-400 mb-4">Camera not available — upload a photo instead.</p>
+      <label for="fileInput" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-5 py-2.5 rounded-lg text-sm cursor-pointer transition">
+        <i data-lucide="upload" class="w-4 h-4"></i> Choose Photo
+      </label>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+    </div>
+
+    <button id="captureBtn" class="hidden w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-4 rounded-xl text-base transition glow-emerald">
+      <span class="w-4 h-4 rounded-full bg-black"></span> Capture Photo
+    </button>
+  </div>
+
+  <!-- STEP: Preview -->
+  <div id="step-preview" class="ai-step hidden">
+    <h2 class="font-display text-xl font-bold text-white mb-4 text-center">Review Image</h2>
+    <img id="previewImg" class="w-full rounded-xl border border-white/10 mb-5" alt="Captured photo">
+    <div class="grid grid-cols-2 gap-3">
+      <button id="retakeBtn" class="inline-flex items-center justify-center gap-1.5 border border-white/15 hover:bg-white/5 text-zinc-300 font-semibold py-3 rounded-xl text-sm transition">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Retake
+      </button>
+      <button id="analyzeBtn" class="inline-flex items-center justify-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 rounded-xl text-sm transition">
+        <i data-lucide="sparkles" class="w-4 h-4"></i> Analyze
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP: Analyzing -->
+  <div id="step-analyzing" class="ai-step hidden py-16 text-center">
+    <div class="w-14 h-14 mx-auto rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-6">
+      <i data-lucide="loader-circle" class="w-6 h-6 text-emerald-400 animate-spin"></i>
+    </div>
+    <p class="text-white font-medium mb-2">Analyzing your image…</p>
+    <p class="text-zinc-500 text-sm analyzing-dot">Detecting problem · Finding category · Preparing report</p>
+    <p id="locationStatus" class="text-zinc-600 text-xs mt-4"></p>
+  </div>
+
+  <!-- STEP: Review -->
+  <div id="step-review" class="ai-step hidden">
+    <h2 class="font-display text-xl font-bold text-white mb-1 text-center">Review Your Report</h2>
+    <p class="text-zinc-500 text-sm text-center mb-6">AI assists — you confirm before anything is submitted.</p>
+
+    <img id="reviewImg" class="w-full rounded-xl border border-white/10 mb-5" alt="Captured photo">
+
+    <div id="fallbackNotice" class="hidden rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs px-4 py-3 mb-4 flex items-start gap-2">
+      <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+      <span>AI is currently unavailable — this is a fallback/demo result. Please fill in the category and description manually below.</span>
+    </div>
+    <div id="lowConfidenceNotice" class="hidden rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs px-4 py-3 mb-4 flex items-start gap-2">
+      <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+      <span>AI is not fully confident. Please review the suggested category.</span>
+    </div>
+
+    <form id="reviewForm" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="text-xs text-zinc-400 mb-1.5 block">Detected Problem</label>
+        <input type="text" id="reviewProblemType" name="problem_type" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+      </div>
+
+      <div>
+        <label class="text-xs text-zinc-400 mb-1.5 block">Category</label>
+        <select id="reviewSector" name="sector" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+          <option value="">— Select category —</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs text-zinc-400 mb-1.5 block">Priority</label>
+        <select id="reviewPriority" name="priority" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs text-zinc-400 mb-1.5 block">Description</label>
+        <textarea id="reviewDescription" name="description" rows="3" required class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50"></textarea>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-zinc-400 mb-1.5 block">Your Name (optional)</label>
+          <input type="text" name="citizen_name" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+        </div>
+        <div>
+          <label class="text-xs text-zinc-400 mb-1.5 block">Phone (optional)</label>
+          <input type="tel" name="citizen_phone" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs text-zinc-400 mb-1.5 block">Address / Landmark (optional)</label>
+        <input type="text" name="address_text" class="w-full bg-base border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+      </div>
+
+      <input type="hidden" id="reviewConfidence" name="ai_confidence">
+      <input type="hidden" id="reviewAiProcessed" name="ai_processed">
+      <input type="hidden" id="reviewLatitude" name="latitude">
+      <input type="hidden" id="reviewLongitude" name="longitude">
+
+      <div class="grid grid-cols-2 gap-3 pt-2">
+        <button type="button" id="retakeFromReviewBtn" class="inline-flex items-center justify-center gap-1.5 border border-white/15 hover:bg-white/5 text-zinc-300 font-semibold py-3 rounded-xl text-sm transition">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Retake
+        </button>
+        <button type="submit" id="submitBtn" class="inline-flex items-center justify-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 rounded-xl text-sm transition glow-emerald">
+          <i data-lucide="send" class="w-4 h-4"></i> Submit Report
+        </button>
+      </div>
+    </form>
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const CSRF_TOKEN = "{{ csrf_token }}";
+  const AI_ANALYZE_URL = "{% url 'ai_analyze' %}";
+  const AI_SUBMIT_URL = "{% url 'ai_submit' %}";
+</script>
+<script src="{% static 'civiq/js/location.js' %}"></script>
+<script src="{% static 'civiq/js/camera.js' %}"></script>
+<script src="{% static 'civiq/js/ai-report.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,30 @@
+/* CIVIQ — camera.css
+   Small supplementary styles for the AI Camera view that aren't easily
+   expressed with Tailwind utility classes alone. */
+
+#cameraVideo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 1rem;
+  background: #000;
+  transform: scaleX(-1);
+}
+
+.ai-step {
+  animation: civiq-fade-in 0.2s ease-out;
+}
+
+@keyframes civiq-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.analyzing-dot {
+  animation: civiq-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes civiq-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}

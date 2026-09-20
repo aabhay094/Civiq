@@ -1,0 +1,6 @@
+/* CIVIQ — report.css
+   Shared minimal styles for /report/ entry and success pages. */
+
+.report-cta-glow {
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 12px 32px -8px rgba(16, 185, 129, 0.35);
+}
